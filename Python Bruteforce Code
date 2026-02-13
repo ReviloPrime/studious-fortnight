@@ -1,0 +1,32 @@
+import zipfile
+from zipfile import ZipFile
+
+#Bruteforce
+
+def attempt_extract(zf_handle, password):
+    try:
+        zf_handle.extractall(pwd=password)
+        return True
+    except RuntimeError:
+        return False
+    except Exception as e:
+        print("Unexpected error:", e)
+        return False
+
+def main():
+    print("[+] Beginning bruteforce")
+
+    try:
+        with ZipFile('enc.zip') as zf:
+            with open('rockyou.txt', 'rb') as f:
+                for p in f:
+                    password = p.strip()
+                    if attempt_extract(zf, password):
+                        print("[+] Correct password:", password.decode(errors="ignore"))
+                        return
+        print("[+] Password not found in list")
+    except FileNotFoundError as e:
+        print("File error:", e)
+
+if __name__ == "__main__":
+    main()
